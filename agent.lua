@@ -22,6 +22,10 @@ function agent:__init(config)
     self.discount = config.discount
     self.hid_dim = config.hid_dim
     self.env = config.env
+    self.params, self.grad_params = self.policy_net:getParameters()
+    self.optim_config = {
+        learningRate = 0.1,
+    }
 end
 
 function agent:remember(mem_input)
@@ -31,10 +35,21 @@ function agent:remember(mem_input)
     end
 end
 
+function agent:create_network()
+    local net = nn.Sequential()
+    net:add(nn.Linear(self.n_states, self.hid_dim))
+    net:add(nn.ReLU())
+    net:add(nn.Linear(self.hid_dim, self.hid_dim))
+    net:add(nn.ReLU())
+    net:add(nn.Linear(self.hid_dim, self.n_actions))
+    return net
+end
+
 function agent:generate_batch()
     local mem_size = #self.memory
     local bsize = math.min(mem_size, self.bsize)
     local indices = torch.randperm(mem_size)
+
     -- inputs are screens, targets are actions
     local inputs = torch.zeros(bsize, self.n_states)
     local targets = torch.zeros(bsize, self.n_actions)
@@ -62,16 +77,17 @@ function agent:generate_batch()
     return inputs, targets
 end
 
-function agent:create_network()
-    local net = nn.Sequential()
-    net:add(nn.Linear(self.n_states, self.hid_dim))
-    net:add(nn.ReLU())
-    net:add(nn.Linear(self.hid_dim, self.hid_dim))
-    net:add(nn.ReLU())
-    net:add(nn.Linear(self.hid_dim, self.n_actions))
-    return net
-end
-
-function agent:train()
-    
+function agent:train(inputs, targets)
+    local loss = 0
+    local function feval(x)
+        self.grad_params:zero()
+        local preds = self.policy_net:forward(inputs)
+        loss = self.criterion:forward(preds, targets)
+        local grad_output = self.criterion:backward(preds, targets)
+        self.policy_net:backward(inputs, grad_output)
+        return loss, self.grad_params
+    end
+    local _, fs = optim.adagrad(feval, self.params, self.optim_config)
+    loss = loss + fs[1]
+    return loss
 end

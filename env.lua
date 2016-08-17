@@ -22,9 +22,9 @@ function env:observe()
     local screen = torch.zeros(self.win_height, self.win_width)
     screen[{ self.state[1], self.state[2] }] = 1
     -- draw basket
-    screen[{ self.win_height, self.state[3] - 1 }] = 1
-    screen[{ self.win_height, self.state[3] }] = 1
-    screen[{ self.win_height, self.state[3] + 1 }] = 1
+    screen[{ self.win_height, self.state[3] - 1 }] = 2
+    screen[{ self.win_height, self.state[3] }] = 2
+    screen[{ self.win_height, self.state[3] + 1 }] = 2
     screen = screen:view(-1)
     return screen
 end
