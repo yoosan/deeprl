@@ -7,7 +7,7 @@
 --  of patent rights can be found in the PATENTS file in the same directory.
 --
 --  Author: Yao Zhou, yao.zhou@hobot.cc 
---  
+--
 
 local learner = torch.class('deeprl.learner')
 
@@ -15,9 +15,10 @@ function learner:__init(config)
     self.epoch = config.epoch
     self.env_config = config.env_config
     self.agent_config = config.agent_config
-    self.env = deeprl.env(self.env_config)
+    self.envir = deeprl.envir(self.env_config)
     self.agent = deeprl.agent(self.agent_config)
     self.epsilon = config.epsilon
+    self.screen = deeprl.screen(config.env_config)
 end
 
 function learner:run()
@@ -26,11 +27,11 @@ function learner:run()
 
         -- init environment
         local error = 0
-        self.env:reset()
+        self.envir:reset()
         local game_over = false
 
         -- init state
-        local cur_state = self.env:observe()
+        local cur_state = self.envir:observe()
 
         while game_over ~= true do
             local action
@@ -47,7 +48,7 @@ function learner:run()
                 self.epsilon = self.epsilon * 0.999
             end
 
-            local next_state, reward, go = self.env:act(action)
+            local next_state, reward, go = self.envir:act(action)
             game_over = go
             if reward == 1 then score = score + 100 end
 
@@ -59,13 +60,15 @@ function learner:run()
                 game_over = game_over,
             })
 
+            self.screen:show(self.envir.state)
             cur_state = next_state
 
             -- batch training
             local inputs, targets = self.agent:generate_batch()
             error = error + self.agent:train(inputs, targets)
         end
-        utils.printf('Epoch %d : error = %.6f : Score %d \n', i, error, score)
+        collectgarbage()
+        print(string.format('Epoch %d : error = %f : Score %d', i, error, score))
     end
 end
 

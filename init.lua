@@ -7,7 +7,18 @@
 --  of patent rights can be found in the PATENTS file in the same directory.
 --
 --  Author: Yao Zhou, yao.zhou@hobot.cc 
---
+--  
+
+
+deeprl = {}
+require('torch')
+require('nn')
+require('optim')
+require('image')
+require('agent')
+require('envir')
+require('screen')
+require('learner')
 
 function math.randf()
     local rand = math.random(1, 10000)

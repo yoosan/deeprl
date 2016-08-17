@@ -9,19 +9,18 @@
 --  Author: Yao Zhou, yao.zhou@hobot.cc 
 --  
 
-local env = torch.class('deeprl.env')
+local envir = torch.class('deeprl.envir')
 
-function env:__init(config)
+function envir:__init(config)
     self.win_height = config.win_height
     self.win_width = config.win_width
-    self.env = {}
     self.state = nil
 end
 
-function env:observe()
+function envir:observe()
     local screen = torch.zeros(self.win_height, self.win_width)
-
     screen[{ self.state[1], self.state[2] }] = 1
+
     -- draw basket
     screen[{ self.win_height, self.state[3] - 1 }] = 2
     screen[{ self.win_height, self.state[3] }] = 2
@@ -30,19 +29,19 @@ function env:observe()
     return screen
 end
 
-function env:reset()
+function envir:reset()
     local init_col = math.random(1, self.win_width)
     local init_pos = math.random(2, self.win_width - 1)
     self.state = torch.Tensor({ 1, init_col, init_pos })
     return self:get_state()
 end
 
-function env:get_state()
+function envir:get_state()
     local state = self.state
     return state[1], state[2], state[3]
 end
 
-function env:get_reward()
+function envir:get_reward()
     local row, col, pos = self:get_state()
     if row == self.win_height - 1 then -- reach the bottom
     if math.abs(col - pos) <= 1 then
@@ -55,7 +54,7 @@ function env:get_reward()
     end
 end
 
-function env:game_over()
+function envir:game_over()
     if self.state[1] >= self.win_height - 1 then
         return true
     else
@@ -63,7 +62,7 @@ function env:game_over()
     end
 end
 
-function env:update_state(action)
+function envir:update_state(action)
     local real_act = 0
     if action == 1 then
         real_act = -1
@@ -73,14 +72,14 @@ function env:update_state(action)
         real_act = 1
     end
     local row, col, pos = self:get_state()
-    -- the basket moves one step, fruit falls one step
 
+    -- the basket moves one step, fruit falls one step
     local new_pos = math.min(self.win_width - 1, math.max(2, pos + real_act))
     row = row + 1
     self.state = torch.Tensor({ row, col, new_pos })
 end
 
-function env:act(action)
+function envir:act(action)
     self:update_state(action)
     local reward = self:get_reward()
     local game_over = self:game_over()

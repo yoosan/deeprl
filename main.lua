@@ -9,22 +9,16 @@
 --  Author: Yao Zhou, yao.zhou@hobot.cc 
 --
 
-deeprl = {}
-require('torch')
-require('nn')
-require('optim')
-require('agent.lua')
-require('env.lua')
-require('learner.lua')
-require('utils.lua')
+if not deeprl then
+    require 'init'
+end
 
 local cmd = torch.CmdLine()
 
 cmd:text('params setting')
 cmd:option('-seed', os.time(), 'initial random seed')
 cmd:option('-win_height', 18, 'environment window height')
-cmd:option('-win_width', 12, 'environment window width')
-cmd:option('-win_width', 12, 'environment window width')
+cmd:option('-win_width', 16, 'environment window width')
 cmd:option('-max_men', 1000, 'max memory size')
 cmd:option('-bsize', 16, 'training batch size')
 cmd:option('-n_actions', 3, 'number of actions')
@@ -55,13 +49,13 @@ local agent_config = {
     }
 }
 
-local env = deeprl.env(env_config)
+local env = deeprl.envir(env_config)
 local agent = deeprl.agent(agent_config)
 
 local learner_config = {
     env_config = env_config,
     agent_config = agent_config,
-    env = env,
+    envir = env,
     agent = agent,
     epsilon = opt.epsilon,
     epoch = opt.epoch,
