@@ -21,6 +21,7 @@ function learner:__init(config)
 end
 
 function learner:run()
+    local score = 0
     for i = 1, self.epoch do
 
         -- init environment
@@ -30,11 +31,10 @@ function learner:run()
 
         -- init state
         local cur_state = self.env:observe()
-        local score = 0
 
         while game_over ~= true do
             local action
-            if math.randf() < self.epsilon then
+            if math.randf() <= self.epsilon then
                 action = math.random(1, self.agent_config.n_actions)
             else
                 -- forward
@@ -47,8 +47,9 @@ function learner:run()
                 self.epsilon = self.epsilon * 0.999
             end
 
-            local next_state, reward, game_over = self.env:act(action)
-            if reward == 1 then score = score + reward * 100 end
+            local next_state, reward, go = self.env:act(action)
+            game_over = go
+            if reward == 1 then score = score + 100 end
 
             self.agent:remember({
                 input_state = cur_state,
@@ -64,7 +65,7 @@ function learner:run()
             local inputs, targets = self.agent:generate_batch()
             error = error + self.agent:train(inputs, targets)
         end
-        utils.printf('Epoch %d : error = %.6f : Score %d', i, error, score)
+        utils.printf('Epoch %d : error = %.6f : Score %d \n', i, error, score)
     end
 end
 

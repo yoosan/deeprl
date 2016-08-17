@@ -13,7 +13,7 @@ local agent = torch.class('deeprl.agent')
 
 function agent:__init(config)
     self.memory = {}
-    self.max_mem = config.max_mem
+    self.max_mem = config.max_mem or 1000
     self.bsize = config.bsize
     self.n_actions = config.n_actions
     self.n_states = config.n_states
@@ -29,7 +29,7 @@ end
 
 function agent:remember(mem_input)
     table.insert(self.memory, mem_input)
-    if #self.memory > self.max_mem then
+    if #(self.memory) > self.max_mem then
         table.remove(mem_input, 1)
     end
 end
@@ -47,7 +47,6 @@ end
 function agent:generate_batch()
     local mem_size = #self.memory
     local bsize = math.min(mem_size, self.bsize)
-    local indices = torch.randperm(mem_size)
 
     -- inputs are screens, targets are actions
     local inputs = torch.zeros(bsize, self.n_states)

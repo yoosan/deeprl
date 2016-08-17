@@ -20,6 +20,7 @@ end
 
 function env:observe()
     local screen = torch.zeros(self.win_height, self.win_width)
+
     screen[{ self.state[1], self.state[2] }] = 1
     -- draw basket
     screen[{ self.win_height, self.state[3] - 1 }] = 2
@@ -55,7 +56,7 @@ function env:get_reward()
 end
 
 function env:game_over()
-    if self.state[1] == self.win_height - 1 then
+    if self.state[1] >= self.win_height - 1 then
         return true
     else
         return false
@@ -63,22 +64,24 @@ function env:game_over()
 end
 
 function env:update_state(action)
+    local real_act = 0
     if action == 1 then
-        action = -1
+        real_act = -1
     elseif action == 2 then
-        action = 0
+        real_act = 0
     else
-        action = 1
+        real_act = 1
     end
     local row, col, pos = self:get_state()
     -- the basket moves one step, fruit falls one step
-    local new_pos = math.min(self.win_width - 1, math.max(2, pos + action))
+
+    local new_pos = math.min(self.win_width - 1, math.max(2, pos + real_act))
     row = row + 1
     self.state = torch.Tensor({ row, col, new_pos })
 end
 
 function env:act(action)
-    env:update_state(action)
+    self:update_state(action)
     local reward = self:get_reward()
     local game_over = self:game_over()
     return self:observe(), reward, game_over, self:get_state()

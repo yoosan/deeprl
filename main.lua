@@ -30,6 +30,8 @@ cmd:option('-bsize', 16, 'training batch size')
 cmd:option('-n_actions', 3, 'number of actions')
 cmd:option('-discount', 0.9, 'discount factor gamma ')
 cmd:option('-hid_dim', 128, 'dimension of hidden states')
+cmd:option('-epoch', 1000, 'training epoch')
+cmd:option('-epsilon', 1, 'training epoch')
 cmd:text()
 
 -- parse arguments
@@ -42,7 +44,7 @@ local env_config = {
 }
 
 local agent_config = {
-    max_len = opt.max_len,
+    max_men = opt.max_men,
     bsize = opt.bsize,
     n_actions = opt.n_actions,
     n_states = opt.win_height * opt.win_width,
@@ -56,5 +58,14 @@ local agent_config = {
 local env = deeprl.env(env_config)
 local agent = deeprl.agent(agent_config)
 
-print(env)
-print(agent)
+local learner_config = {
+    env_config = env_config,
+    agent_config = agent_config,
+    env = env,
+    agent = agent,
+    epsilon = opt.epsilon,
+    epoch = opt.epoch,
+}
+
+local learner = deeprl.learner(learner_config)
+learner:run()
