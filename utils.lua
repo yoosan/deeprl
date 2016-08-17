@@ -13,8 +13,3 @@ function math.randf()
     local rand = math.random(1, 10000)
     return rand / 10000
 end
-
-math.randomseed(os.time())
-for i = 1, 10 do
-    print(math.randf())
-end

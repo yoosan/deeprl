@@ -12,18 +12,17 @@
 local agent = torch.class('deeprl.agent')
 
 function agent:__init(config)
-    self.max_mem = config.max_mem
-    self.policy_net = self:create_network()
     self.memory = {}
-    self.criterion = nn.MSECriterion()
+    self.max_mem = config.max_mem
     self.bsize = config.bsize
     self.n_actions = config.n_actions
     self.n_states = config.n_states
     self.discount = config.discount
     self.hid_dim = config.hid_dim
-    self.env = config.env
+    self.policy_net = self:create_network()
+    self.criterion = nn.MSECriterion()
     self.params, self.grad_params = self.policy_net:getParameters()
-    self.optim_config = {
+    self.optim_config = config.optim_config or {
         learningRate = 0.1,
     }
 end
@@ -87,6 +86,7 @@ function agent:train(inputs, targets)
         self.policy_net:backward(inputs, grad_output)
         return loss, self.grad_params
     end
+
     local _, fs = optim.adagrad(feval, self.params, self.optim_config)
     loss = loss + fs[1]
     return loss
