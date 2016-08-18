@@ -14,18 +14,25 @@ local screen = torch.class('deeprl.screen')
 function screen:__init(config)
     self.win_height = config.win_height
     self.win_width = config.win_width
+    self.screen = torch.Tensor(3, self.win_height, self.win_width):fill(0.8)
+    self.win = nil
 end
 
 function screen:show(state)
     -- fill window with white color
-    local scr = torch.Tensor(3, self.win_height, self.win_width):fill(0.8)
-    local w
     local row, col, pos = state[1], state[2], state[3]
-    scr[{1, row, col}], scr[{2, row, col}], scr[{3, row, col}] = 0.5, 0.3, 0.2
-    local basket = scr:sub(1, 3, self.win_height, self.win_height, pos - 1, pos + 1)
-    -- fill color
-    basket[{1,}], basket[{2, }], basket[{3, }] = 0.2, 0.3, 0.5
-    w = image.display({image=scr, offscreen=false, win=w, zoom=30})
-    scr:fill(0.8)
---    sys.sleep(0.5)
+    self.screen[{1, row, col}], self.screen[{2, row, col}], self.screen[{3, row, col}] = 0.5, 0.3, 0.2
+    -- fill color for basket
+    self.screen[{1, self.win_height, pos}] = 0.2
+    self.screen[{2, self.win_height, pos}] = 0.3
+    self.screen[{3, self.win_height, pos}] = 0.5
+    self.screen[{1, self.win_height, pos-1}] = 0.2
+    self.screen[{2, self.win_height, pos-1}] = 0.3
+    self.screen[{3, self.win_height, pos-1}] = 0.5
+    self.screen[{1, self.win_height, pos+1}] = 0.2
+    self.screen[{2, self.win_height, pos+1}] = 0.3
+    self.screen[{3, self.win_height, pos+1}] = 0.5
+    self.win = image.display({image=self.screen, offscreen=false, win=self.win, zoom=30})
+    self.screen:fill(0.8)
+    -- sys.sleep(0.5)
 end
