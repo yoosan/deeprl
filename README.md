@@ -27,6 +27,8 @@ The result looks like
 
 ![](static/demo.gif)
 
+I got the accuracy of `93.2%` (932 success of 1000 steps).
+
 ## Code 
 
 The `envir.lua` indicates the environment in reinforcement learning stage, which receives the action and produces the states and reward for agent.
