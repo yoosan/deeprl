@@ -60,7 +60,7 @@ function learner:run()
                 game_over = game_over,
             })
 
-            self.screen:show(self.envir.state)
+            -- self.screen:show(self.envir.state)
             cur_state = next_state
 
             -- batch training
@@ -72,3 +72,23 @@ function learner:run()
     end
 end
 
+function learner:test(steps)
+    local score = 0
+    for i = 1, steps do
+        local game_over = false
+        local row, col, pos = self.envir:reset()
+        local cur_state = self.envir:observe()
+        while not game_over do
+            local q = self.agent.policy_net:forward(cur_state)
+            local max, idx = torch.max(q, 1)
+            local action = idx[1]
+            local next_state, reward, go, row, col, pos = self.envir:act(action)
+            cur_state = next_state
+            game_over = go
+            reward = reward > 0 and 1 or 0
+            score = score + reward * 100
+            self.screen:show(self.envir.state)
+        end
+        print(string.format('step %d, score is %d', i, score))
+    end
+end

@@ -63,3 +63,4 @@ local learner_config = {
 
 local learner = deeprl.learner(learner_config)
 learner:run()
+learner:test(1000)
