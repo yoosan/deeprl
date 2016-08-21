@@ -41,7 +41,7 @@ The `learner.lua` is the algorithm of deep Q-learning with experience replay as 
 
 ## MISC
 
-I completed this code when I was an intern at [Horizon Robotics](http://www.horizon-robotics.com/index_en.html). I will greatly thanks the article of [Andrej Karpathy](https://karpathy.github.io/2016/05/31/rl/) and other implementations:[SeanNaren's code](https://github.com/SeanNaren/TorchQLearningExample) and [EderSantana's gist](https://gist.github.com/EderSantana/c7222daa328f0e885093).
+I completed this code when I was an intern at [Horizon Robotics](http://www.horizon-robotics.com/index_en.html). I will greatly thank the article of [Andrej Karpathy](https://karpathy.github.io/2016/05/31/rl/) and other implementations:[SeanNaren's code](https://github.com/SeanNaren/TorchQLearningExample) and [EderSantana's gist](https://gist.github.com/EderSantana/c7222daa328f0e885093).
 
 ## LICENSE
 MIT
