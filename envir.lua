@@ -44,11 +44,11 @@ end
 function envir:get_reward()
     local row, col, pos = self:get_state()
     if row == self.win_height - 1 then -- reach the bottom
-    if math.abs(col - pos) <= 1 then
-        return 1 -- catch
-    else
-        return -1 -- not catch
-    end
+        if math.abs(col - pos) <= 1 then
+            return 1 -- catch
+        else
+            return -1 -- not catch
+        end
     else
         return 0
     end

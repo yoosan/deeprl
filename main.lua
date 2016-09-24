@@ -25,7 +25,7 @@ cmd:option('-n_actions', 3, 'number of actions')
 cmd:option('-discount', 0.9, 'discount factor gamma ')
 cmd:option('-hid_dim', 128, 'dimension of hidden states')
 cmd:option('-epoch', 1000, 'training epoch')
-cmd:option('-epsilon', 1, 'training epoch')
+cmd:option('-epsilon', 1, 'epsilon, random sampling rate')
 cmd:text()
 
 -- parse arguments

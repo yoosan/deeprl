@@ -14,6 +14,7 @@ local agent = torch.class('deeprl.agent')
 function agent:__init(config)
     self.memory = {}
     self.max_mem = config.max_mem or 1000
+    self.duel = config.duel or true
     self.bsize = config.bsize
     self.n_actions = config.n_actions
     self.n_states = config.n_states
@@ -41,6 +42,68 @@ function agent:create_network()
     net:add(nn.Linear(self.hid_dim, self.hid_dim))
     net:add(nn.ReLU())
     net:add(nn.Linear(self.hid_dim, self.n_actions))
+    if self.duel then
+        return self:create_duel_network()
+    else
+        return net
+    end
+end
+
+function agent:create_duel_network()
+
+    local DuelAggregator = function(m)
+        local aggregator = nn.Sequential()
+        local aggParallel = nn.ParallelTable()
+
+        -- Advantage duplicator (for calculating and subtracting mean)
+        local advDuplicator = nn.Sequential()
+        local advConcat = nn.ConcatTable()
+        advConcat:add(nn.Identity())
+        -- Advantage mean duplicator
+        local advMeanDuplicator = nn.Sequential()
+        advMeanDuplicator:add(nn.Mean(1, 1))
+        advMeanDuplicator:add(nn.Replicate(m, 2, 2))
+        advConcat:add(advMeanDuplicator)
+        advDuplicator:add(advConcat)
+        -- Subtract mean from advantage values
+        advDuplicator:add(nn.CSubTable())
+
+        -- Add value and advantage duplicators
+        aggParallel:add(nn.Replicate(m, 2, 2))
+        aggParallel:add(advDuplicator)
+
+        -- Calculate Q^ = V^ + A^
+        aggregator:add(aggParallel)
+        aggregator:add(nn.CAddTable())
+
+        return aggregator
+    end
+
+    local net = nn.Sequential()
+    net:add(nn.Linear(self.n_states, self.hid_dim))
+    net:add(nn.ReLU())
+
+    local valStream = nn.Sequential()
+    valStream:add(nn.Linear(self.hid_dim, self.hid_dim))
+    valStream:add(nn.ReLU(true))
+    valStream:add(nn.Linear(self.hid_dim, 1)) -- Predicts value for state
+
+    -- Advantage approximator A^(s, a)
+    local advStream = nn.Sequential()
+    advStream:add(nn.Linear(self.hid_dim, self.hid_dim))
+    advStream:add(nn.ReLU(true))
+    -- Predicts action-conditional advantage
+    advStream:add(nn.Linear(self.hid_dim, self.n_actions))
+
+    -- Streams container
+    local streams = nn.ConcatTable()
+    streams:add(valStream)
+    streams:add(advStream)
+
+    -- Add dueling streams
+    net:add(streams)
+    net:add(DuelAggregator(self.n_actions))
+    net:add(nn.View(-1))
     return net
 end
 
