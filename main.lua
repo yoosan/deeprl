@@ -26,6 +26,8 @@ cmd:option('-discount', 0.9, 'discount factor gamma ')
 cmd:option('-hid_dim', 128, 'dimension of hidden states')
 cmd:option('-epoch', 1000, 'training epoch')
 cmd:option('-epsilon', 1, 'epsilon, random sampling rate')
+cmd:option('-duel', false, 'using dueling network')
+
 cmd:text()
 
 -- parse arguments
@@ -44,6 +46,7 @@ local agent_config = {
     n_states = opt.win_height * opt.win_width,
     discount = opt.discount,
     hid_dim = opt.hid_dim,
+    duel = opt.duel,
     optim_config = {
         learningRate = 0.1,
     }
