@@ -91,4 +91,5 @@ function learner:test(steps)
         end
         print(string.format('step %d, score is %d', i, score))
     end
+    os.exit()
 end
