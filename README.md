@@ -2,7 +2,8 @@
 
 This code implements the standard deep Q-learning and dueling network with Experience Replay for playing catch.
 
-DQN algorithm implemented in this code is from the Google DeepMind's paper **Playing Atari with Deep Reinforcement Learning**[[link](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)]
+DQN algorithm implemented in this code is from the Google DeepMind's paper **Playing Atari with Deep Reinforcement Learning**[[link](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)].
+
 Dueling network is from the paper **Dueling Network Architectures for Deep Reinforcement Learning** [[link](https://arxiv.org/pdf/1511.06581v3)]
 
 ## Requirement
