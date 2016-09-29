@@ -27,7 +27,7 @@ cmd:option('-hid_dim', 128, 'dimension of hidden states')
 cmd:option('-epoch', 1000, 'training epoch')
 cmd:option('-epsilon', 1, 'epsilon, random sampling rate')
 cmd:option('-duel', true, 'using dueling network')
-
+cmd:option('-task', 'pong', 'game option')
 cmd:text()
 
 -- parse arguments
@@ -52,18 +52,19 @@ local agent_config = {
     }
 }
 
-local env = deeprl.envir(env_config)
-local agent = deeprl.agent(agent_config)
-
 local learner_config = {
     env_config = env_config,
     agent_config = agent_config,
-    envir = env,
-    agent = agent,
+    task = opt.task,
     epsilon = opt.epsilon,
     epoch = opt.epoch,
 }
 
 local learner = deeprl.learner(learner_config)
-learner:run()
-learner:test(1000)
+if opt.task == 'car' then
+    learner:run_car()
+    learner:test_car(100)
+else
+    learner:run()
+    learner:test(1000)
+end

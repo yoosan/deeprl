@@ -36,3 +36,25 @@ function screen:show(state)
     self.screen:fill(0.8)
     -- sys.sleep(0.5)
 end
+
+function screen:show_car(state)
+    local car_pos = state[1]
+    self.screen[{1, self.win_height, car_pos}] = 0.5
+    self.screen[{2, self.win_height, car_pos}] = 0.3
+    self.screen[{3, self.win_height, car_pos}] = 0.2
+
+    for i = 2, #state do
+        local row = state[i][1]
+        local col1, col2 = state[i][2], state[i][3]
+        self.screen[{1, row, col1}] = 0.2
+        self.screen[{2, row, col1}] = 0.3
+        self.screen[{3, row, col1}] = 0.5
+        self.screen[{1, row, col2}] = 0.2
+        self.screen[{2, row, col2}] = 0.3
+        self.screen[{3, row, col2}] = 0.5
+    end
+
+    self.win = image.display({image=self.screen, offscreen=false, win=self.win, zoom=30})
+    self.screen:fill(0.8)
+    -- sys.sleep(0.5)
+end

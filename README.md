@@ -1,6 +1,6 @@
 #DeepRL
 
-This code implements the standard deep Q-learning and dueling network with Experience Replay for playing catch.
+This code implements the standard deep Q-learning and dueling network with experience replay (memory buffer) for playing simple games.
 
 DQN algorithm implemented in this code is from the Google DeepMind's paper **Playing Atari with Deep Reinforcement Learning**[[link](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)].
 
@@ -27,10 +27,14 @@ qlua main.lua
 
 The result looks like
 
-![](static/demo.gif)
+![](static/pong.gif)
+
+![](static/car.gif)
+
 
 DQN: I got the accuracy of `93.2%` (932 success of 1000 epochs).
-Duel: I got the accuracy of `99.2%` (992 success of 1000 epochs).
+
+Dueling: I got the accuracy of `99.2%` (992 success of 1000 epochs).
 
 
 ## Code 

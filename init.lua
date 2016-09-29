@@ -19,6 +19,7 @@ require('agent')
 require('envir')
 require('screen')
 require('learner')
+require('carenv')
 
 function math.randf()
     local rand = math.random(1, 10000)
