@@ -1,4 +1,4 @@
-#DeepRL
+# DeepRL
 
 This code implements the standard deep Q-learning and dueling network with experience replay (memory buffer) for playing simple games.
 
